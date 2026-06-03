@@ -4,9 +4,6 @@ import {
   Users, 
   Tag, 
   Plus, 
-  Building2, 
-  User, 
-  Car, 
   Trash2, 
   CheckCircle,
   AlertCircle
@@ -60,7 +57,7 @@ export default function AdminPanel({
   const handleRegisterClient = (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim() || !vehiclePlate.trim() || !vehicleBrand.trim() || !vehicleModel.trim()) {
-      showAlert('error', 'Por favor llena los campos obligatorios (Nombre, Placas, Marca y Modelo).');
+      showAlert('error', 'Llena los campos obligatorios (Nombre, Placas, Marca y Modelo).');
       return;
     }
 
@@ -97,13 +94,13 @@ export default function AdminPanel({
   const handleRegisterService = (e: React.FormEvent) => {
     e.preventDefault();
     if (!serviceName.trim() || !servicePrice) {
-      showAlert('error', 'Por favor llena los campos del servicio (Nombre y Precio).');
+      showAlert('error', 'Llena los campos obligatorios del servicio (Nombre y Precio).');
       return;
     }
 
     const priceNum = parseFloat(servicePrice);
     if (isNaN(priceNum) || priceNum <= 0) {
-      showAlert('error', 'Por favor ingresa un precio válido mayor a 0 pesos.');
+      showAlert('error', 'Ingresa un precio válido mayor a 0 pesos.');
       return;
     }
 
@@ -124,257 +121,230 @@ export default function AdminPanel({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" id="admin-panel">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-3xs overflow-hidden" id="admin-panel">
       {/* Tab Navigation */}
-      <div className="flex border-b border-slate-200 bg-slate-50/50">
+      <div className="flex border-b border-slate-150">
         <button
           onClick={() => setActiveSubTab('clients')}
-          className={`flex-1 py-4 text-center text-sm font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
+          className={`flex-1 py-4 text-center text-sm md:text-base font-bold flex items-center justify-center gap-2.5 border-b-2 transition-all cursor-pointer ${
             activeSubTab === 'clients'
-              ? 'border-indigo-600 text-indigo-600 bg-white'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              ? 'border-slate-900 text-slate-900 bg-white'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
           id="btn-subtab-clients"
         >
           <Users size={18} />
-          Clientes y Flotillas ({clients.length})
+          Clientes y Flotillas
         </button>
         <button
           onClick={() => setActiveSubTab('services')}
-          className={`flex-1 py-4 text-center text-sm font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
+          className={`flex-1 py-4 text-center text-sm md:text-base font-bold flex items-center justify-center gap-2.5 border-b-2 transition-all cursor-pointer ${
             activeSubTab === 'services'
-              ? 'border-indigo-600 text-indigo-600 bg-white'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              ? 'border-slate-900 text-slate-900 bg-white'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
           id="btn-subtab-services"
         >
           <Tag size={18} />
-          Lista de Precios Fijos ({services.length})
+          Lista de Precios Fijos
         </button>
       </div>
 
-      {/* Floating alerts */}
+      {/* Alerts */}
       <AnimatePresence>
         {alert && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`mx-6 mt-4 p-3 rounded-xl flex items-center gap-2 text-sm ${
-              alert.type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' : 'bg-rose-50 text-rose-800 border border-rose-100'
+            exit={{ opacity: 0, y: -10 }}
+            className={`mx-5 mt-4 p-3 rounded-lg flex items-center gap-2.5 text-sm font-semibold ${
+              alert.type === 'success' 
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-100/50 shadow-xs' 
+                : 'bg-rose-50 text-rose-800 border border-rose-100/50 shadow-xs'
             }`}
           >
-            {alert.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
+            {alert.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
             <span>{alert.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="p-6">
+      <div className="p-5">
         {activeSubTab === 'clients' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Form for New Client */}
-            <div className="lg:col-span-1 border-r border-slate-100 lg:pr-8">
-              <h3 className="text-lg font-bold font-display text-slate-900 mb-4 flex items-center gap-2">
-                <Plus size={20} className="text-indigo-600" />
-                Registrar Nuevo Cliente
-              </h3>
-              <form onSubmit={handleRegisterClient} className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            {/* Form */}
+            <form onSubmit={handleRegisterClient} className="lg:col-span-4 space-y-4 pr-0 lg:pr-5 lg:border-r lg:border-slate-100">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">Nuevo Registro</span>
+              
+              <div>
+                <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Nombre Completo *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ej. Carlos Martínez"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-1 focus:ring-slate-900 focus:border-slate-950 font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Tipo de Cliente *</label>
+                <div className="grid grid-cols-2 gap-1 px-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setClientType('particular')}
+                    className={`py-1.5 text-sm font-semibold rounded-md transition-all cursor-pointer ${
+                      clientType === 'particular'
+                        ? 'bg-slate-900 text-white'
+                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    Particular
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setClientType('empresa')}
+                    className={`py-1.5 text-sm font-semibold rounded-md transition-all cursor-pointer ${
+                      clientType === 'empresa'
+                        ? 'bg-slate-900 text-white'
+                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    Empresa / Flotilla
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Nombre Completo *</label>
+                  <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Teléfono</label>
                   <input
-                    type="text"
-                    required
-                    placeholder="Ej. Carlos Martínez"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
+                    type="tel"
+                    placeholder="555..."
+                    value={clientPhone}
+                    onChange={(e) => setClientPhone(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Tipo de Cliente *</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setClientType('particular')}
-                      className={`py-2 px-3 text-xs font-semibold rounded-xl border flex items-center justify-center gap-1.5 transition-all ${
-                        clientType === 'particular'
-                          ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                          : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                      }`}
-                    >
-                      <User size={14} />
-                      Particular
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setClientType('empresa')}
-                      className={`py-2 px-3 text-xs font-semibold rounded-xl border flex items-center justify-center gap-1.5 transition-all ${
-                        clientType === 'empresa'
-                          ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                          : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                      }`}
-                    >
-                      <Building2 size={14} />
-                      Empresa / Flotilla
-                    </button>
-                  </div>
+                  <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Email</label>
+                  <input
+                    type="email"
+                    placeholder="carlos@..."
+                    value={clientEmail}
+                    onChange={(e) => setClientEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900"
+                  />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Subform vehicle */}
+              <div className="pt-3 border-t border-slate-100 space-y-3">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">Vehículo</span>
+                
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Teléfono</label>
+                    <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Placas *</label>
                     <input
-                      type="tel"
-                      placeholder="555..."
-                      value={clientPhone}
-                      onChange={(e) => setClientPhone(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
+                      type="text"
+                      required
+                      placeholder="MEX-12"
+                      value={vehiclePlate}
+                      onChange={(e) => setVehiclePlate(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900 uppercase font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">E-mail</label>
+                    <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Año</label>
                     <input
-                      type="email"
-                      placeholder="correo@ejemplo.com"
-                      value={clientEmail}
-                      onChange={(e) => setClientEmail(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
+                      type="text"
+                      placeholder="2019"
+                      value={vehicleYear}
+                      onChange={(e) => setVehicleYear(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900"
                     />
                   </div>
                 </div>
 
-                {/* Sub-formulario Auto Inicial */}
-                <div className="pt-3 border-t border-slate-100">
-                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2 flex items-center gap-1">
-                    <Car size={14} className="text-indigo-600" />
-                    Vehículo Inicial Asociado
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Placas *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ej. MX-123-A"
-                          value={vehiclePlate}
-                          onChange={(e) => setVehiclePlate(e.target.value)}
-                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-indigo-500 uppercase font-mono"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Año</label>
-                        <input
-                          type="text"
-                          placeholder="Ej. 2019"
-                          value={vehicleYear}
-                          onChange={(e) => setVehicleYear(e.target.value)}
-                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-indigo-500"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Marca *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ej. Toyota"
-                          value={vehicleBrand}
-                          onChange={(e) => setVehicleBrand(e.target.value)}
-                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-indigo-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Modelo *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ej. Corolla"
-                          value={vehicleModel}
-                          onChange={(e) => setVehicleModel(e.target.value)}
-                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-indigo-500"
-                        />
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Marca *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Audi"
+                      value={vehicleBrand}
+                      onChange={(e) => setVehicleBrand(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Modelo *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="A4"
+                      value={vehicleModel}
+                      onChange={(e) => setVehicleModel(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900"
+                    />
                   </div>
                 </div>
+              </div>
 
-                <button
-                  type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-sm mt-4 hover:shadow-md"
-                >
-                  <Plus size={16} />
-                  Registrar Cliente y Auto
-                </button>
-              </form>
-            </div>
+              <button
+                type="submit"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              >
+                <Plus size={15} />
+                Registrar Cliente
+              </button>
+            </form>
 
-            {/* List of Clients */}
-            <div className="lg:col-span-2">
-              <h3 className="text-lg font-bold font-display text-slate-900 mb-4 flex items-center justify-between">
-                <span>Lista y Catalogo de Clientes ({clients.length})</span>
-                <span className="text-xs text-slate-400 font-normal">Vehículos registrados</span>
-              </h3>
+            {/* List */}
+            <div className="lg:col-span-8 flex flex-col">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">Catálogo de Clientes ({clients.length})</span>
               
-              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
+              <div className="space-y-3 overflow-y-auto max-h-[500px] pr-1">
                 {clients.length === 0 ? (
-                  <div className="text-center py-12 text-slate-400 border border-dashed border-slate-200 rounded-xl" id="empty-clients">
-                    No hay clientes registrados en la base de datos de flotillas.
+                  <div className="text-center py-12 text-slate-400 border border-dashed border-slate-200 rounded-lg text-sm" id="empty-clients">
+                    No hay clientes registrados de momento.
                   </div>
                 ) : (
                   clients.map((client) => (
                     <div
                       key={client.id}
-                      className="border border-slate-200 rounded-xl p-4 bg-white hover:border-indigo-200 hover:shadow-xs transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                      className="border border-slate-150 rounded-xl p-4 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-200 transition-all flex items-start justify-between gap-4 shadow-3xs"
                       id={`client-card-${client.id}`}
                     >
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="font-bold text-slate-900 text-base">{client.name}</h4>
-                          <span className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                            client.type === 'empresa'
-                              ? 'bg-purple-50 text-purple-700 border border-purple-100'
-                              : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
-                          }`}>
-                            {client.type === 'empresa' ? (
-                              <>
-                                <Building2 size={10} />
-                                Empresa / Flotilla
-                              </>
-                            ) : (
-                              <>
-                                <User size={10} />
-                                Particular
-                              </>
-                            )}
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h4 className="font-bold text-slate-800 text-sm md:text-base">{client.name}</h4>
+                          <span className="text-xs text-slate-450 hover:text-slate-650 uppercase font-mono tracking-wider font-semibold">
+                            ({client.type})
                           </span>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                          <span><strong>Tel:</strong> {client.phone}</span>
-                          <span><strong>Email:</strong> {client.email}</span>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 leading-none">
+                          <span>Tel: <strong className="text-slate-750">{client.phone}</strong></span>
+                          <span>&bull;</span>
+                          <span>Email: <strong className="text-slate-750">{client.email}</strong></span>
                         </div>
 
-                        {/* Vehicles of client */}
-                        <div className="pt-2">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vehículos Registrados:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {client.vehicles.map((v) => (
-                              <div
-                                key={v.id}
-                                className="inline-flex items-center gap-2 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 text-xs text-slate-700"
-                              >
-                                <Car size={12} className="text-slate-500" />
-                                <span>{v.brand} <strong>{v.model}</strong> ({v.year})</span>
-                                <span className="font-mono bg-slate-200/80 text-slate-800 text-[10px] font-bold px-1.5 py-0.5 rounded-sm select-all">
-                                  {v.plate}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                        {/* Vehicles */}
+                        <div className="pt-2 flex flex-wrap gap-2">
+                          {client.vehicles.map((v) => (
+                            <div
+                              key={v.id}
+                              className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 shadow-3xs hover:border-slate-300 transition-all"
+                            >
+                              <span className="font-medium">{v.brand} {v.model} ({v.year})</span>
+                              <span className="font-mono text-xs font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md select-all border border-slate-200/50">
+                                {v.plate}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       </div>
 
@@ -383,10 +353,10 @@ export default function AdminPanel({
                           onClick={() => {
                             if (confirm(`¿Seguro que deseas eliminar a ${client.name}?`)) {
                               onDeleteClient(client.id);
-                              showAlert('success', 'Cliente eliminado de la base de datos.');
+                              showAlert('success', 'Cliente eliminado con éxito.');
                             }
                           }}
-                          className="self-end sm:self-start p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                          className="p-1.5 text-slate-350 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all shrink-0 cursor-pointer"
                           title="Eliminar cliente"
                         >
                           <Trash2 size={16} />
@@ -397,104 +367,96 @@ export default function AdminPanel({
                 )}
               </div>
             </div>
+
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Form for New Service */}
-            <div className="lg:col-span-1 border-r border-slate-100 lg:pr-8">
-              <h3 className="text-lg font-bold font-display text-slate-900 mb-4 flex items-center gap-2">
-                <Plus size={20} className="text-indigo-600" />
-                Agregar Servicio Fijo
-              </h3>
-              <form onSubmit={handleRegisterService} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Nombre del Servicio *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. Diagnóstico Computarizado"
-                    value={serviceName}
-                    onChange={(e) => setServiceName(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Precio Base (MXN) *</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2 text-slate-400 font-mono text-sm">$</span>
-                    <input
-                      type="number"
-                      required
-                      min="1"
-                      step="any"
-                      placeholder="850"
-                      value={servicePrice}
-                      onChange={(e) => setServicePrice(e.target.value)}
-                      className="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Descripción Breve</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Describe brevemente qué incluye este servicio para el mecánico..."
-                    value={serviceDescription}
-                    onChange={(e) => setServiceDescription(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 resize-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md"
-                >
-                  <Plus size={16} />
-                  Guardar Servicio Base
-                </button>
-              </form>
-            </div>
-
-            {/* List of services catalog */}
-            <div className="lg:col-span-2">
-              <h3 className="text-lg font-bold font-display text-slate-900 mb-4 flex items-center justify-between">
-                <span>Catálogo de Servicios Fijos ({services.length})</span>
-                <span className="text-xs text-slate-400 font-normal">Precios fijos sin variación</span>
-              </h3>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            {/* Form */}
+            <form onSubmit={handleRegisterService} className="lg:col-span-4 space-y-4 pr-0 lg:pr-5 lg:border-r lg:border-slate-100">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">Nuevo Servicio Fijo</span>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-1">
+              <div>
+                <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Nombre del Servicio *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ej. Cambio de Aceite"
+                  value={serviceName}
+                  onChange={(e) => setServiceName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Precio Base (MXN) *</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-slate-450 text-sm">$</span>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    placeholder="850"
+                    value={servicePrice}
+                    onChange={(e) => setServicePrice(e.target.value)}
+                    className="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs md:text-sm text-slate-600 font-semibold mb-1">Descripción Breve</label>
+                <textarea
+                  rows={2}
+                  placeholder="Incluye cambio de filtro, etc."
+                  value={serviceDescription}
+                  onChange={(e) => setServiceDescription(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:border-slate-900 resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              >
+                <Plus size={15} />
+                Guardar Servicio
+              </button>
+            </form>
+
+            {/* List */}
+            <div className="lg:col-span-8 flex flex-col">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">Catálogo del Taller ({services.length})</span>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 overflow-y-auto max-h-[500px] pr-1">
                 {services.map((service) => (
                   <div
                     key={service.id}
-                    className="border border-slate-200 rounded-xl p-4 bg-white hover:border-indigo-200 hover:shadow-xs transition-all flex flex-col justify-between"
+                    className="border border-slate-150 rounded-xl p-4 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-200 transition-all flex flex-col justify-between text-sm shadow-3xs"
                     id={`service-card-${service.id}`}
                   >
                     <div>
-                      <div className="flex justify-between items-start gap-2 mb-1">
-                        <h4 className="font-bold text-slate-900 text-sm leading-tight">{service.name}</h4>
-                        <span className="font-mono font-bold text-indigo-600 text-sm shrink-0">
+                      <div className="flex justify-between items-start gap-1.5">
+                        <h4 className="font-bold text-slate-800 leading-tight text-sm md:text-base">{service.name}</h4>
+                        <span className="font-mono font-bold text-slate-900 shrink-0 select-all">
                           ${service.basePrice.toLocaleString('es-MX')}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 line-clamp-3 mb-4">{service.description}</p>
+                      <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">{service.description}</p>
                     </div>
 
                     {onDeleteService && (
-                      <div className="flex justify-end pt-2 border-t border-slate-50">
+                      <div className="flex justify-end pt-3 border-t border-slate-200/50 mt-3">
                         <button
                           onClick={() => {
                             if (confirm(`¿Seguro que deseas eliminar el servicio ${service.name}?`)) {
                               onDeleteService(service.id);
-                              showAlert('success', 'Servicio eliminado del catálogo.');
+                              showAlert('success', 'Servicio eliminado.');
                             }
                           }}
-                          className="p-1 px-2.5 text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all flex items-center gap-1"
-                          title="Eliminar de la lista"
+                          className="text-xs text-slate-400 hover:text-rose-600 transition-all py-1 px-2.5 rounded-lg hover:bg-rose-50 cursor-pointer"
                         >
-                          <Trash2 size={12} />
-                          <span>Eliminar</span>
+                          Eliminar
                         </button>
                       </div>
                     )}
@@ -502,6 +464,7 @@ export default function AdminPanel({
                 ))}
               </div>
             </div>
+
           </div>
         )}
       </div>

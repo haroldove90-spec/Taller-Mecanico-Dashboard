@@ -1,11 +1,4 @@
 import { Order } from '../types';
-import { 
-  ClipboardList, 
-  Wrench, 
-  CheckCircle2, 
-  DollarSign, 
-  Car 
-} from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface StatsOverviewProps {
@@ -13,95 +6,38 @@ interface StatsOverviewProps {
 }
 
 export default function StatsOverview({ orders }: StatsOverviewProps) {
-  // Active orders (not delivered or just everything that is active in current list)
-  const activeOrders = orders.filter(o => o.status !== 'Listo para entrega' || o.paymentStatus !== 'Pagado');
+  const activeOrders = orders.filter(o => o.status !== 'Listo para entrega' || o.paymentStatus !== 'Pagado').length;
   const enRevision = orders.filter(o => o.status === 'En revisión').length;
   const reparando = orders.filter(o => o.status === 'Reparando').length;
-  const listoParaEntrega = orders.filter(o => o.status === 'Listo para entrega' && o.paymentStatus !== 'Pagado').length;
-
-  // Total collected (Pagado)
+  const listos = orders.filter(o => o.status === 'Listo para entrega' && o.paymentStatus !== 'Pagado').length;
+  
   const totalCollected = orders
     .filter(o => o.paymentStatus === 'Pagado')
-    .reduce((sum, o) => {
-      const orderTotal = o.services.reduce((sSum, s) => sSum + s.price, 0);
-      return sum + orderTotal;
-    }, 0);
-
-  // Total pending (Pendiente de pago)
-  const totalPending = orders
-    .filter(o => o.paymentStatus === 'Pendiente de pago')
-    .reduce((sum, o) => {
-      const orderTotal = o.services.reduce((sSum, s) => sSum + s.price, 0);
-      return sum + orderTotal;
-    }, 0);
+    .reduce((sum, o) => sum + o.services.reduce((sSum, s) => sSum + s.price, 0), 0);
 
   const stats = [
-    {
-      id: 'stat-active',
-      title: 'Órdenes Activas',
-      value: activeOrders.length,
-      description: 'En proceso de atención',
-      icon: ClipboardList,
-      color: 'text-blue-600 bg-blue-50 border-blue-100',
-    },
-    {
-      id: 'stat-revision',
-      title: 'En Revisión',
-      value: enRevision,
-      description: 'Por diagnosticar',
-      icon: Car,
-      color: 'text-amber-600 bg-amber-50 border-amber-100',
-    },
-    {
-      id: 'stat-reparando',
-      title: 'En Reparación',
-      value: reparando,
-      description: 'Técnicos trabajando',
-      icon: Wrench,
-      color: 'text-indigo-600 bg-indigo-50 border-indigo-100',
-    },
-    {
-      id: 'stat-listo',
-      title: 'Listo para Entrega',
-      value: listoParaEntrega,
-      description: 'Por cobrar y entregar',
-      icon: CheckCircle2,
-      color: 'text-emerald-600 bg-emerald-50 border-emerald-100',
-    },
-    {
-      id: 'stat-caja',
-      title: 'Ingresos Cobrados',
-      value: `$${totalCollected.toLocaleString('es-MX')}`,
-      description: `Pendiente: $${totalPending.toLocaleString('es-MX')}`,
-      icon: DollarSign,
-      color: 'text-slate-800 bg-slate-100 border-slate-200',
-    }
+    { label: 'Órdenes Activas', value: activeOrders },
+    { label: 'Revisión / Diagnóstico', value: enRevision },
+    { label: 'En Reparación', value: reparando },
+    { label: 'Listos para Entrega', value: listos },
+    { label: 'Caja Cobrada (MXN)', value: `$${totalCollected.toLocaleString('es-MX')}` }
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      {stats.map((stat, i) => {
-        const Icon = stat.icon;
-        return (
-          <motion.div
-            key={stat.id}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: i * 0.05 }}
-            className={`border rounded-xl p-4 bg-white shadow-xs flex items-center justify-between`}
-            id={stat.id}
-          >
-            <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{stat.title}</p>
-              <h3 className="text-2xl font-bold font-display mt-1 text-slate-900">{stat.value}</h3>
-              <p className="text-xs text-slate-500 mt-0.5">{stat.description}</p>
-            </div>
-            <div className={`p-3 rounded-xl border ${stat.color}`}>
-              <Icon size={20} className="stroke-2" />
-            </div>
-          </motion.div>
-        );
-      })}
+    <div className="flex flex-wrap items-center gap-x-8 gap-y-3 py-3 px-6 bg-white border border-slate-200/60 rounded-xl mb-6 shadow-2xs" id="stats-overview">
+      {stats.map((stat, i) => (
+        <motion.div 
+          key={stat.label}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: i * 0.04 }}
+          className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap"
+        >
+          <span className="text-sm text-slate-500 font-medium">{stat.label}:</span>
+          <span className="text-base md:text-lg font-bold text-slate-900 font-mono">{stat.value}</span>
+          {i < stats.length - 1 && <span className="text-slate-200 ml-4 hidden sm:inline">|</span>}
+        </motion.div>
+      ))}
     </div>
   );
 }
