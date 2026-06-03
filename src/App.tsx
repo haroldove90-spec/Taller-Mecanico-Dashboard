@@ -19,7 +19,8 @@ import {
   X,
   PlusCircle,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -31,7 +32,7 @@ export default function App() {
   const [orders, setOrders] = useState<Order[]>([]);
 
   // Active perspective
-  const [activeRole, setActiveRole] = useState<'reception' | 'mechanic' | 'admin'>('reception');
+  const [activeRole, setActiveRole] = useState<'home' | 'reception' | 'mechanic' | 'admin'>('home');
 
   // History state
   const [showHistory, setShowHistory] = useState(false);
@@ -148,23 +149,97 @@ export default function App() {
   const liveOrders = orders.filter(o => !(o as any).isDelivered);
   const archivedOrders = orders.filter(o => (o as any).isDelivered);
 
+  if (activeRole === 'home') {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 md:p-12 font-sans" id="home-view">
+        <div className="max-w-3xl w-full text-center space-y-12">
+          {/* Logo & Name of Program */}
+          <div className="flex flex-col items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-md animate-fade-in">
+              <Wrench size={32} />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 font-display">
+              Gestión de Taller
+            </h1>
+          </div>
+
+          {/* 3 Icons and their Role name */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {/* Reception */}
+            <button
+              onClick={() => setActiveRole('reception')}
+              className="bg-white border border-slate-200 hover:border-slate-400 hover:shadow-xs rounded-xl p-8 flex flex-col items-center gap-4 transition-all cursor-pointer group"
+              id="home-role-reception"
+            >
+              <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 transition-all group-hover:bg-slate-900 group-hover:text-white">
+                <UserSquare2 size={28} />
+              </div>
+              <span className="font-bold text-sm text-slate-800 uppercase tracking-wider group-hover:text-slate-900">Recepción</span>
+            </button>
+
+            {/* Mechanics */}
+            <button
+              onClick={() => setActiveRole('mechanic')}
+              className="bg-white border border-slate-200 hover:border-slate-400 hover:shadow-xs rounded-xl p-8 flex flex-col items-center gap-4 transition-all cursor-pointer group"
+              id="home-role-mechanic"
+            >
+              <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 transition-all group-hover:bg-slate-900 group-hover:text-white">
+                <Wrench size={28} />
+              </div>
+              <span className="font-bold text-sm text-slate-800 uppercase tracking-wider group-hover:text-slate-900">Técnicos / Taller</span>
+            </button>
+
+            {/* Admin */}
+            <button
+              onClick={() => setActiveRole('admin')}
+              className="bg-white border border-slate-200 hover:border-slate-400 hover:shadow-xs rounded-xl p-8 flex flex-col items-center gap-4 transition-all cursor-pointer group"
+              id="home-role-admin"
+            >
+              <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 transition-colors group-hover:bg-slate-900 group-hover:text-white">
+                <ShieldAlert size={28} />
+              </div>
+              <span className="font-bold text-sm text-slate-800 uppercase tracking-wider group-hover:text-slate-900">Administración</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-slate-900 pb-12" id="app-root">
       {/* Premium minimal header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-white border-b border-slate-200" id="app-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             
-            {/* Elegant Branding without flashy tags */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shrink-0">
-                <Wrench className="w-5 h-5" />
-              </div>
-              <div>
-                <h1 className="text-lg md:text-xl font-bold tracking-tight text-slate-900 font-display">
-                  Gestión de Taller
-                </h1>
-                <p className="text-xs md:text-sm text-slate-400">Control unificado de servicios y reparaciones</p>
+            {/* Elegant Back button & active perspective */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setActiveRole('home')}
+                className="p-2 sm:px-3 sm:py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2 text-xs sm:text-sm font-bold cursor-pointer shadow-3xs"
+                id="back-to-home-btn"
+                title="Volver al inicio"
+              >
+                <ArrowLeft size={15} />
+                <span>Volver al Inicio</span>
+              </button>
+
+              <div className="h-6 w-px bg-slate-200"></div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white shrink-0">
+                  {activeRole === 'reception' && <UserSquare2 className="w-4 h-4" />}
+                  {activeRole === 'mechanic' && <Wrench className="w-4 h-4" />}
+                  {activeRole === 'admin' && <ShieldAlert className="w-4 h-4" />}
+                </div>
+                <div>
+                  <h1 className="text-sm sm:text-base font-bold tracking-tight text-slate-900 leading-none">
+                    {activeRole === 'reception' && 'Recepción'}
+                    {activeRole === 'mechanic' && 'Taller y Técnicos'}
+                    {activeRole === 'admin' && 'Administración'}
+                  </h1>
+                </div>
               </div>
             </div>
 
@@ -191,52 +266,6 @@ export default function App() {
             </div>
 
           </div>
-
-          {/* Minimalist Tab Navigation */}
-          <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
-            <button
-              onClick={() => setActiveRole('reception')}
-              className={`px-5 py-2.5 rounded-lg text-sm md:text-base font-medium flex items-center gap-2 transition-all cursor-pointer ${
-                activeRole === 'reception'
-                  ? 'bg-slate-900 text-white shadow-xs font-semibold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-              id="role-tab-reception"
-            >
-              <UserSquare2 size={16} />
-              <span>Recepción</span>
-              {liveOrders.filter(o => o.status === 'Listo para entrega' && o.paymentStatus !== 'Pagado').length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveRole('mechanic')}
-              className={`px-5 py-2.5 rounded-lg text-sm md:text-base font-medium flex items-center gap-2 transition-all cursor-pointer ${
-                activeRole === 'mechanic'
-                  ? 'bg-slate-900 text-white shadow-xs font-semibold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-              id="role-tab-mechanic"
-            >
-              <Wrench size={16} />
-              <span>Técnicos / Taller</span>
-            </button>
-
-            <button
-              onClick={() => setActiveRole('admin')}
-              className={`px-5 py-2.5 rounded-lg text-sm md:text-base font-medium flex items-center gap-2 transition-all cursor-pointer ${
-                activeRole === 'admin'
-                  ? 'bg-slate-900 text-white shadow-xs font-semibold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-              id="role-tab-admin"
-            >
-              <ShieldAlert size={16} />
-              <span>Administración</span>
-            </button>
-          </div>
-
         </div>
       </header>
 
