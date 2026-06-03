@@ -39,6 +39,21 @@ export default function App() {
 
   // Initialize from LocalStorage
   useEffect(() => {
+    const v3Loaded = localStorage.getItem('taller_v3_loaded');
+    if (!v3Loaded) {
+      // Force load the new rich expanded mockup data with completed orders
+      setClients(INITIAL_CLIENTS);
+      setServices(INITIAL_SERVICES);
+      setMechanics(INITIAL_MECHANICS);
+      setOrders(INITIAL_ORDERS);
+      localStorage.setItem('taller_clients', JSON.stringify(INITIAL_CLIENTS));
+      localStorage.setItem('taller_services', JSON.stringify(INITIAL_SERVICES));
+      localStorage.setItem('taller_mechanics', JSON.stringify(INITIAL_MECHANICS));
+      localStorage.setItem('taller_orders', JSON.stringify(INITIAL_ORDERS));
+      localStorage.setItem('taller_v3_loaded', 'true');
+      return;
+    }
+
     const storedClients = localStorage.getItem('taller_clients');
     const storedServices = localStorage.getItem('taller_services');
     const storedMechanics = localStorage.getItem('taller_mechanics');
@@ -151,54 +166,63 @@ export default function App() {
 
   if (activeRole === 'home') {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 md:p-12 font-sans" id="home-view">
-        <div className="max-w-3xl w-full text-center space-y-12">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 sm:p-6 font-sans" id="home-view">
+        <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-8 animate-fade-in text-center">
           {/* Logo & Name of Program */}
-          <div className="flex flex-col items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-md animate-fade-in">
-              <Wrench size={32} />
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-3xs">
+              <Wrench size={22} className="stroke-[2.5]" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 font-display">
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-display">
               Gestión de Taller
             </h1>
           </div>
 
-          {/* 3 Icons and their Role name */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {/* Discreet parallel 3-column layout */}
+          <div className="grid grid-cols-3 gap-2.5">
             {/* Reception */}
             <button
               onClick={() => setActiveRole('reception')}
-              className="bg-white border border-slate-200 hover:border-slate-400 hover:shadow-xs rounded-xl p-8 flex flex-col items-center gap-4 transition-all cursor-pointer group"
+              className="bg-slate-50/50 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 rounded-xl p-2.5 sm:p-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group"
               id="home-role-reception"
+              title="Acceder a Recepción"
             >
-              <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 transition-all group-hover:bg-slate-900 group-hover:text-white">
-                <UserSquare2 size={28} />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-white border border-slate-150 flex items-center justify-center text-slate-700 transition-colors group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 shadow-3xs">
+                <UserSquare2 size={16} className="sm:size-5" />
               </div>
-              <span className="font-bold text-sm text-slate-800 uppercase tracking-wider group-hover:text-slate-900">Recepción</span>
+              <span className="font-extrabold text-[9px] sm:text-xs text-slate-700 uppercase tracking-widest block truncate w-full text-center">
+                Recepción
+              </span>
             </button>
 
             {/* Mechanics */}
             <button
               onClick={() => setActiveRole('mechanic')}
-              className="bg-white border border-slate-200 hover:border-slate-400 hover:shadow-xs rounded-xl p-8 flex flex-col items-center gap-4 transition-all cursor-pointer group"
+              className="bg-slate-50/50 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 rounded-xl p-2.5 sm:p-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group"
               id="home-role-mechanic"
+              title="Acceder a Talleristas"
             >
-              <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 transition-all group-hover:bg-slate-900 group-hover:text-white">
-                <Wrench size={28} />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-white border border-slate-150 flex items-center justify-center text-slate-700 transition-colors group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 shadow-3xs">
+                <Wrench size={16} className="sm:size-5" />
               </div>
-              <span className="font-bold text-sm text-slate-800 uppercase tracking-wider group-hover:text-slate-900">Técnicos / Taller</span>
+              <span className="font-extrabold text-[9px] sm:text-xs text-slate-700 uppercase tracking-widest block truncate w-full text-center">
+                Técnicos
+              </span>
             </button>
 
             {/* Admin */}
             <button
               onClick={() => setActiveRole('admin')}
-              className="bg-white border border-slate-200 hover:border-slate-400 hover:shadow-xs rounded-xl p-8 flex flex-col items-center gap-4 transition-all cursor-pointer group"
+              className="bg-slate-50/50 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 rounded-xl p-2.5 sm:p-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group"
               id="home-role-admin"
+              title="Acceder a Administración"
             >
-              <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 transition-colors group-hover:bg-slate-900 group-hover:text-white">
-                <ShieldAlert size={28} />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-white border border-slate-150 flex items-center justify-center text-slate-700 transition-colors group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 shadow-3xs">
+                <ShieldAlert size={16} className="sm:size-5" />
               </div>
-              <span className="font-bold text-sm text-slate-800 uppercase tracking-wider group-hover:text-slate-900">Administración</span>
+              <span className="font-extrabold text-[9px] sm:text-xs text-slate-700 uppercase tracking-widest block truncate w-full text-center">
+                Admin
+              </span>
             </button>
           </div>
         </div>
