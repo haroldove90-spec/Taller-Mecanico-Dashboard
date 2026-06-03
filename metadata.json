@@ -1,0 +1,6 @@
+{
+  "name": "Control de Taller Mecánico",
+  "description": "Dashboard para la administración de un taller mecánico, con secciones para Administrador, Recepcionista y Técnico.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
